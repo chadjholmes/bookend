@@ -1,118 +1,95 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+// App.tsx
 
 import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import LibraryScreen from './src/screens/LibraryScreen';
+import AddBookScreen from './src/screens/AddBookScreen';
+import BookDetailsScreen from './src/screens/BookDetailsScreen';
+import DashboardScreen from './src/screens/DashboardScreen';
+import AddReadingSessionScreen from './src/screens/AddReadingSessionScreen';
+import { BookProvider } from './src/context/BookContext';
+import { ReadingSessionProvider } from './src/context/ReadingSessionContext';
+import { Provider as PaperProvider } from 'react-native-paper';
+import { theme } from './src/theme';
+import Icon from 'react-native-vector-icons/Ionicons'; // Import Ionicons or any preferred icon set
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+// Stack Navigator for Library Screens
+const LibraryStack = () => (
+  <Stack.Navigator initialRouteName="Library">
+    <Stack.Screen
+      name="Library"
+      component={LibraryScreen}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="AddBook"
+      component={AddBookScreen}
+      options={{ title: 'Add New Book' }}
+    />
+    <Stack.Screen
+      name="BookDetails"
+      component={BookDetailsScreen}
+      options={{ title: 'Book Details' }}
+    />
+    <Stack.Screen
+      name="AddReadingSession"
+      component={AddReadingSessionScreen}
+      options={{ title: 'Add Reading Session' }}
+    />
+  </Stack.Navigator>
+);
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+// Stack Navigator for Dashboard Screens (if you have more screens in Dashboard)
+const DashboardStack = () => (
+  <Stack.Navigator>
+    <Stack.Screen
+      name="Dashboard"
+      component={DashboardScreen}
+      options={{ title: 'Dashboard' }}
+    />
+    {/* Add more Dashboard-related screens here */}
+  </Stack.Navigator>
+);
+
+const App: React.FC = () => {
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
+    <BookProvider>
+      <ReadingSessionProvider>
+        <PaperProvider theme={theme}>
+          <NavigationContainer>
+            <Tab.Navigator
+              initialRouteName="Library"
+              screenOptions={({ route }) => ({
+                tabBarIcon: ({ focused, color, size }) => {
+                  let iconName: string = '';
+
+                  if (route.name === 'Library') {
+                    iconName = focused ? 'book' : 'book-outline';
+                  } else if (route.name === 'Dashboard') {
+                    iconName = focused ? 'stats-chart' : 'stats-chart-outline';
+                  }
+
+                  // Return the appropriate icon
+                  return <Icon name={iconName} size={size} color={color} />;
+                },
+                tabBarActiveTintColor: '#007AFF',
+                tabBarInactiveTintColor: 'gray',
+                headerShown: false, // Hide header for Tab Navigator
+              })}
+            >
+              <Tab.Screen name="Library" component={LibraryStack} />
+              <Tab.Screen name="Dashboard" component={DashboardStack} />
+            </Tab.Navigator>
+          </NavigationContainer>
+        </PaperProvider>
+      </ReadingSessionProvider>
+    </BookProvider>
   );
-}
-
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+};
 
 export default App;
