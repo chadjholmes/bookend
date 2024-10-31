@@ -6,6 +6,7 @@ import { getBooks, addBook, updateBook, deleteBook } from '../services/BookServi
 
 interface BookContextProps {
   books: Book[];
+  deleteBook: (id: number) => Promise<void>;
   refreshBooks: () => Promise<void>;
   addNewBook: (book: Book) => Promise<void>;
   editBook: (book: Book) => Promise<void>;
@@ -14,6 +15,7 @@ interface BookContextProps {
 
 export const BookContext = createContext<BookContextProps>({
   books: [],
+  deleteBook: async () => {},
   refreshBooks: async () => {},
   addNewBook: async () => {},
   editBook: async () => {},
@@ -48,7 +50,7 @@ export const BookProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
   return (
-    <BookContext.Provider value={{ books, refreshBooks, addNewBook, editBook, removeBook }}>
+    <BookContext.Provider value={{ books, deleteBook: removeBook, refreshBooks, addNewBook, editBook, removeBook }}>
       {children}
     </BookContext.Provider>
   );

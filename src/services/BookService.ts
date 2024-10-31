@@ -1,13 +1,12 @@
 // src/services/BookService.ts
-
 import { Book } from '../models/Book';
 import { initDB } from './database';
-import SQLite, { ResultSet, Transaction } from 'react-native-sqlite-storage';
+import SQLite, { SQLResultSet, SQLTransaction } from 'react-native-sqlite-storage';
 
 export const getBooks = async (): Promise<Book[]> => {
   try {
     const db = await initDB();
-    const results: [ResultSet] = await db.executeSql(`SELECT * FROM Books;`);
+    const results: [SQLResultSet] = await db.executeSql(`SELECT * FROM Books;`);
     const books: Book[] = [];
 
     results.forEach(result => {

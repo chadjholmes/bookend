@@ -15,7 +15,15 @@ import { Provider as PaperProvider } from 'react-native-paper';
 import { theme } from './src/theme';
 import Icon from 'react-native-vector-icons/Ionicons'; // Import Ionicons or any preferred icon set
 
-const Stack = createStackNavigator();
+// Add this type definition at the top of the file, after imports
+type LibraryStackParamList = {
+  Library: undefined;
+  AddBook: undefined;
+  BookDetails: { bookId: string };
+  AddReadingSession: { bookId: string };
+};
+
+const Stack = createStackNavigator<LibraryStackParamList>();
 const Tab = createBottomTabNavigator();
 
 // Stack Navigator for Library Screens
